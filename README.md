@@ -1,66 +1,53 @@
-## Foundry
+Token Address: The address of the ERC721 token that you want to list for sale.
+Token ID: The unique identifier of the ERC721 token you want to sell.
+Price: The price at which you want to sell the token, specified in Ether.
+Signature: A cryptographic signature to authorize and authenticate the order.
+Deadline: The timestamp indicating until when the order remains valid.
+Preconditions
+Owner
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Verify that the msg.sender is the actual owner of the specified tokenId using the ownerOf() function.
+Ensure that the owner has approved the contract address (this) to spend the token by checking isApprovedForAll().
+Token Address
 
-Foundry consists of:
+Check that the tokenAddress is not set to address(0) (zero address).
+Validate if the specified tokenAddress has a contract associated with it.
+Price
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Confirm that the price specified for the order is greater than zero.
+Signature
 
-## Documentation
+(Additional information needed to define the precondition for the signature)
+Deadline
 
-https://book.getfoundry.sh/
+Verify that the deadline is set to a timestamp greater than the current block.timestamp.
+Logic
+Store the order details in the contract's storage.
+Increment the order ID or counter.
+Optionally, emit an event to notify relevant parties about the order creation.
+Execute a Listing (Payable)
+Preconditions
+Listing ID
 
-## Usage
+Ensure that the listingId is within the valid range of existing listings (less than the public counter).
+Payment
 
-### Build
+Confirm that the value sent with the transaction (msg.value) is equal to the price of the listing.
+Deadline
 
-```shell
-$ forge build
-```
+Check that the current block.timestamp is before or equal to the deadline of the listing.
+Signature
 
-### Test
+(Additional information needed to define the precondition for the signature)
+Logic
+Retrieve the order details from storage based on the listingId.
+Transfer the Ether from the buyer to the seller as payment for the listing.
+Transfer ownership of the ERC721 token from the seller to the buyer.
+Optionally, emit an event to record the execution of the listing.
+Please note that the documentation outlines the key steps and preconditions for creating and executing listings in your ERC721 Marketplace contract. You will need to provide additional details and implementation specifics related to the signature and any other custom logic you may have in your contract.
 
-```shell
-$ forge test
-```
 
-### Format
 
-```shell
-$ forge fmt
-```
 
-### Gas Snapshots
 
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+Regene
