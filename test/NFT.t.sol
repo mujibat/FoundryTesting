@@ -52,6 +52,13 @@ contract ERC721MarketplaceTest is Helpers {
         vm.expectRevert(ERC721Marketplace.NotOwner.selector);
         erc721marketplace.createOrder(order);
    }
+
+
+   function testNotApproved() public {
+    switchSigner(userA);
+    vm.expectRevert(ERC721Marketplace.NotApproved.selector);
+    erc721marketplace.createOrder(order);
+   }
    function testDeadline() public {
         switchSigner(userA);
         _token.setApprovalForAll(address(erc721marketplace), true);
@@ -90,7 +97,7 @@ contract ERC721MarketplaceTest is Helpers {
    function testExecute() public {
     switchSigner(userA);
     _token.setApprovalForAll(address(erc721marketplace), true);
-    order.deadline = block.timestamp + 80 minutes;
+    order.deadline = (block.timestamp + 80);
     order.signature = constructSig(
         order.seller,
         order.token,

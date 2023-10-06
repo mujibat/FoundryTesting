@@ -3,13 +3,9 @@ pragma solidity 0.8.19;
 
 import "../lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
 import "../lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
-import "../lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Metadata.sol";
-import "../lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
-import "../lib/openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
-import "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import { ECDSA } from "../lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol";
 import {SignUtils} from "./libraries/SignUtils.sol";
-contract ERC721Marketplace is Ownable {
+contract ERC721Marketplace  {
     using ECDSA for bytes32;
 
     struct Order {
@@ -30,19 +26,13 @@ contract ERC721Marketplace is Ownable {
     error InvalidSignature();
     error OrderExpired();
     error IncorrectPrice();
+    error NotApproved();
 
-    // modifier onlyValidOrder(uint256 orderId) {
-    //     require(orders[orderId].creator != address(0), "Invalid order");
-    //     require(!orders[orderId].isActive, "Order already isActive");
-    //     _;
-    // }
-    
-
-    constructor() {}
 
     function createOrder(Order calldata order) external returns (uint256 orderId){
         
         if(ERC721(order.token).ownerOf(order.tokenId) != msg.sender) revert NotOwner();
+        if(ERC721(order.token).isApprovedForAll(msg.sender, address(this))) revert NotApproved();        
         if(block.timestamp < order.deadline) revert DeadlinePassed();
         if (order.price <= 0 ether) revert InvalidPrice();
         if (
