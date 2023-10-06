@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity 0.8.19;
 
 library SignUtils {
     function constructMessageHash(
-        address _token,
-        uint256 _tokenId,
-        uint256 _price,
-        uint88 _deadline,
-        address _seller
+        address seller,
+        address token,
+        uint256 tokenId,
+        uint256 price,
+        uint256 deadline
     ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_token, _tokenId));
+        return keccak256(abi.encodePacked(seller, token, tokenId, price, deadline));
     }
 
     function isValid(

@@ -17,14 +17,14 @@ abstract contract Helpers is Test {
 
     function constructSig(
         address seller,
-        address tokenAddress,
+        address token,
         uint256 tokenId,
         uint256 price,
         uint256 deadline,
         uint256 privKey
     ) public pure returns (bytes memory sig) {
         bytes32 mHash = keccak256(
-            abi.encodePacked(seller, tokenAddress, tokenId, price,  deadline)
+            abi.encodePacked(seller, token, tokenId, price, deadline)
         );
 
         mHash = keccak256(
@@ -44,6 +44,8 @@ abstract contract Helpers is Test {
     }
 
     function switchSigner(address _newSigner) public {
-        vm.prank(_newSigner);
+        vm.startPrank(_newSigner);
+        vm.deal(_newSigner, 3 ether);
+        vm.label(_newSigner, "USER");
     }
 }
