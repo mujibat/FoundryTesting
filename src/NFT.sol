@@ -8,6 +8,7 @@ import "../lib/openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
 import "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import { ECDSA } from "../lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol";
 
+
 contract ERC721Marketplace is Ownable {
     using ECDSA for bytes32;
 
@@ -18,19 +19,19 @@ contract ERC721Marketplace is Ownable {
         uint256 price;
         bytes signature;
         uint256 deadline;
-        bool executed;
+        bool isActive;
     }
-    uint _tokenId;
+    uint public _tokenId;
     mapping(uint256 => Order) public orders;
 
     // modifier onlyValidOrder(uint256 orderId) {
     //     require(orders[orderId].creator != address(0), "Invalid order");
-    //     require(!orders[orderId].executed, "Order already executed");
+    //     require(!orders[orderId].isActive, "Order already isActive");
     //     _;
     // }
     function _onlyValidOrder(uint256 orderId) internal view {
          require(orders[orderId].seller != address(0), "Invalid order");
-        require(!orders[orderId].executed, "Order already executed");
+        require(!orders[orderId].isActive, "Order already isActive");
     }
 
     constructor() {}
@@ -50,7 +51,7 @@ contract ERC721Marketplace is Ownable {
             price: _price,
             signature: _signature,
             deadline: _deadline,
-            executed: false
+            isActive: true
         });
     }
    
@@ -65,7 +66,7 @@ contract ERC721Marketplace is Ownable {
         token.safeTransferFrom(order.seller, msg.sender, order.tokenId);
         payable(order.seller).transfer(order.price);
 
-        order.executed = true;
+        order.isActive = true;
     }
 
     function _isValidSignature(address _systemAddress, bytes32 hash, bytes memory signature) internal pure returns (bool) {
